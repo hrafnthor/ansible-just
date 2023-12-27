@@ -12,19 +12,12 @@
         {
             "$ref": "#/definitions/non-empty-string"
         },
-        "releases":
+        "versions":
         {
             "type": "array",
             "items":
             {
-                "type": "object",
-                "properties":
-                {
-                    "version":
-                    {
-                        "$ref": "#/definitions/non-empty-string"
-                    }
-                }
+                "$ref": "#/definitions/non-empty-string"
             }
         }
     },
