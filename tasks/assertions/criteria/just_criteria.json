@@ -1,0 +1,39 @@
+{
+    "title": "just",
+    "descriptions": "schema for 'just' installation",
+    "type": "object",
+    "properties":
+    {
+        "trim":
+        {
+            "type": "boolean"
+        },
+        "primary":
+        {
+            "$ref": "#/definitions/non-empty-string"
+        },
+        "releases":
+        {
+            "type": "array",
+            "items":
+            {
+                "type": "object",
+                "properties":
+                {
+                    "version":
+                    {
+                        "$ref": "#/definitions/non-empty-string"
+                    }
+                }
+            }
+        }
+    },
+    "definitions":
+    {
+        "non-empty-string":
+        {
+            "type": "string",
+            "minLength": 1
+        }
+    }
+}

@@ -1,0 +1,6 @@
+
+# Installation path for versions of 'just'
+just_install_path: "/opt/just"
+
+# Repository url from which 'just' releases will be downloaded from
+just_repository_url: "https://github.com/casey/just"
