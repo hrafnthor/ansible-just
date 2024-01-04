@@ -3,7 +3,7 @@
 
   - name: Ensure Just installation directory
     ansible.builtin.file:
-      path: "{{ just_install_path }}"
+      path: "{{ just_path }}"
       state: directory
       modification_time: preserve
       access_time: preserve
@@ -14,18 +14,18 @@
 
   - name: Set Just version install location
     ansible.builtin.set_fact:
-      just_version_install_path: "{{ just_install_path }}/{{ version }}"
+      just_version_path: "{{ just_path }}/{{ version }}"
 
 
-  - name: Stat Just version directory
+  - name: Lookup Just version directory
     ansible.builtin.stat:
-      path:  "{{ just_version_install_path }}"
+      path:  "{{ just_version_path }}"
     register: version_dir
 
 
   - name: Ensure Just version directory
     ansible.builtin.file:
-      path: "{{ just_version_install_path }}"
+      path: "{{ just_version_path }}"
       state: directory
       modification_time: preserve
       access_time: preserve
@@ -52,7 +52,7 @@
     ansible.builtin.unarchive:
       remote_src: yes
       src: "/tmp/{{ just_archive_name }}"
-      dest: "{{ just_version_install_path }}"
+      dest: "{{ just_version_path }}"
       owner: "root"
       group: "root"
       mode: 0755

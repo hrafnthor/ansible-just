@@ -9,3 +9,9 @@
   loop_control:
     loop_var: version
   when: just.versions | length > 0
+
+
+- name: Link default version
+  ansible.builtin.include_tasks: default.yml
+  when: 
+    - just.default | length > 0 
