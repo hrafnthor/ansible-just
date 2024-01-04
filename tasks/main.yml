@@ -2,3 +2,10 @@
   ansible.builtin.import_tasks: assertions/assert.yml
   run_once: yes
   delegate_to: localhost
+
+- name: Download versions
+  ansible.builtin.include_tasks: download.yml
+  loop: "{{ just.versions }}"
+  loop_control:
+    loop_var: versions
+  when: just.versions | length > 0
