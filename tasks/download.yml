@@ -1,7 +1,7 @@
 - name: Download and unarchive Just version
   block:
 
-  - name: Ensure 'just_install_path' directory
+  - name: Ensure Just installation directory
     ansible.builtin.file:
       path: "{{ just_install_path }}"
       state: directory
@@ -12,15 +12,27 @@
       mode: 0755
 
 
-  - name: Set install location
+  - name: Set Just version install location
     ansible.builtin.set_fact:
       just_version_install_path: "{{ just_install_path }}/{{ version }}"
 
 
-  - name: Stat version directory
+  - name: Stat Just version directory
     ansible.builtin.stat:
       path:  "{{ just_version_install_path }}"
     register: version_dir
+
+
+  - name: Ensure Just version directory
+    ansible.builtin.file:
+      path: "{{ just_version_install_path }}"
+      state: directory
+      modification_time: preserve
+      access_time: preserve
+      owner: "root"
+      group: "root"
+      mode: 0755
+    when: not version_dir.stat.exists
 
 
   - name: Set archive name
@@ -41,7 +53,6 @@
       remote_src: yes
       src: "/tmp/{{ just_archive_name }}"
       dest: "{{ just_version_install_path }}"
-      extra_opts: [--strip-components=1]
       owner: "root"
       group: "root"
       mode: 0755
