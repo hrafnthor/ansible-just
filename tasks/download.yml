@@ -1,5 +1,3 @@
-https://github.com/casey/just/releases/download/1.21.0/just-1.21.0-x86_64-unknown-linux-musl.tar.gz
-
 - name: Download and unarchive Just version
   block:
 
@@ -32,7 +30,7 @@ https://github.com/casey/just/releases/download/1.21.0/just-1.21.0-x86_64-unknow
 
   - name: Download version archive
     ansible.builtin.get_url:
-      url: "https://github.com/casey/just/releases/download/releases/download/{{ version }}/just-{{ version }}0-x86_64-unknown-linux-musl.tar.gz"
+      url: "https://github.com/casey/just/releases/download/{{ version }}/just-{{ version }}-x86_64-unknown-linux-musl.tar.gz"
       dest: "/tmp/{{ just_archive_name }}"
     register: archive_download_state
     when: not version_dir.stat.exists
