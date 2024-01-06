@@ -1,0 +1,17 @@
+# Retrieves a list of all directories in Just path that do not
+# correspond to version numbers defined in task input, nor
+# default directory.
+- name: Find undefined versions
+  ansible.builtin.find:
+    paths: "{{ just_path }}"
+    file_type: directory
+    excludes: "{{ just.versions + ['default'] }}"
+  register: just_path_directories
+
+
+# Removes all directories from previously generated list that are not links
+- name: Remove undefined version
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop: "{{ just_path_directories.files | selectattr('islnk', 'defined') | selectattr('islnk', 'equalto', False)  | map(attribute='path') | list }}"

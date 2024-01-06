@@ -11,6 +11,11 @@
   when: just.versions | length > 0
 
 
+- name: Trim undefined versions
+  ansible.builtin.include_tasks: trim.yml
+  when: just.trim
+
+
 - name: Link default version
   ansible.builtin.include_tasks: default.yml
   when: 
