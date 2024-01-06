@@ -1,0 +1,21 @@
+galaxy_info:
+  author: Hrafn Thorvaldsson
+  description: An opinionated installation role for the 'Just' (https://just.systems)
+  company: hth
+
+  license: MIT
+
+  min_ansible_version: 2.1
+
+  platforms:
+    - name: Ubuntu
+      versions:
+      - 22.04
+      - 20.04
+
+  galaxy_tags:
+    - just
+    - make
+    - command runner
+
+dependencies: []

@@ -1,0 +1,69 @@
+- name: Download and unarchive Just version
+  block:
+
+  - name: Ensure Just installation directory
+    ansible.builtin.file:
+      path: "{{ just_path }}"
+      state: directory
+      modification_time: preserve
+      access_time: preserve
+      owner: "root"
+      group: "root"
+      mode: 0755
+
+
+  - name: Set Just version install location
+    ansible.builtin.set_fact:
+      just_version_path: "{{ just_path }}/{{ version }}"
+
+
+  - name: Lookup Just version directory
+    ansible.builtin.stat:
+      path:  "{{ just_version_path }}"
+    register: version_dir
+
+
+  - name: Ensure Just version directory
+    ansible.builtin.file:
+      path: "{{ just_version_path }}"
+      state: directory
+      modification_time: preserve
+      access_time: preserve
+      owner: "root"
+      group: "root"
+      mode: 0755
+    when: not version_dir.stat.exists
+
+
+  - name: Set archive name
+    ansible.builtin.set_fact:
+      just_archive_name: "just-{{ version }}.tar.gz"
+
+
+  - name: Download version archive
+    ansible.builtin.get_url:
+      url: "https://github.com/casey/just/releases/download/{{ version }}/just-{{ version }}-x86_64-unknown-linux-musl.tar.gz"
+      dest: "/tmp/{{ just_archive_name }}"
+    register: archive_download_state
+    when: not version_dir.stat.exists
+
+
+  - name: Extract archive
+    ansible.builtin.unarchive:
+      remote_src: yes
+      src: "/tmp/{{ just_archive_name }}"
+      dest: "{{ just_version_path }}"
+      owner: "root"
+      group: "root"
+      mode: 0755
+    register: unarchive_state
+    when: not version_dir.stat.exists
+
+
+
+  always:
+
+    - name: Cleanup temporary directory
+      ansible.builtin.file:
+        path: "/tmp/{{ just_archive_name }}"
+        state: absent

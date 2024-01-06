@@ -1,0 +1,12 @@
+
+- name: Assert 'just' variable
+  ansible.builtin.assert:
+    that:
+      - just is mapping
+
+- name: Validate 'just' schema
+  ansible.utils.validate:
+    data: "{{ just }}"
+    criteria:
+      - "{{ lookup('file', './criteria/just_criteria.json') | from_json }}"
+    engine: ansible.utils.jsonschema
