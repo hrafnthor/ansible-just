@@ -1,31 +1,34 @@
 - name: Set Just version install directory
   ansible.builtin.set_fact:
-    just_version_path: "{{ just_path }}/{{ just.default }}"
+    just_version_executable_path: "{{ just_path }}/{{ just.default }}/just"
 
 
-- name: Lookup Just version directory
+- name: Lookup default executable
   ansible.builtin.stat:
-    path:  "{{ just_version_path }}"
-  register: version_dir
+    path:  "{{ just_version_executable_path }}"
+  register: just_default_version_executable
 
 
 - name: Fail on Just version directory not existing
   ansible.builtin.fail:
     msg: "Directory for default version {{ just.default }} was not found!"
-  when: not version_dir.stat.exists
+  when: 
+    - not just_default_version_executable.stat.exists
 
 
 - name: Set Just default directory
   ansible.builtin.set_fact:
     just_default_path: "{{ just_path }}/default"
-  when: version_dir.stat.exists
+  when: 
+    - just_default_version_executable.stat.exists
 
 
 - name: Lookup Just default directory
   ansible.builtin.stat:
     path:  "{{ just_default_path }}"
   register: default_dir
-  when: version_dir.stat.exists
+  when: 
+    - just_default_version_executable.stat.exists
 
 
 - name: Create default directory
@@ -39,12 +42,12 @@
     mode: 0755
   when:
     - not default_dir.stat.exists
-    - version_dir.stat.exists
+    - just_default_version_executable.stat.exists
 
 
 - name: Link default version
   ansible.builtin.file:
-    src: "{{ just_version_path }}/just"
+    src: "{{ just_version_executable_path }}"
     dest: "{{ just_default_path }}/just"
     state: link
     modification_time: preserve
@@ -52,7 +55,8 @@
     owner: "root"
     group: "root"
     mode: 0755
-  when: version_dir.stat.exists
+  when: 
+    - just_default_version_executable.stat.exists
 
 
 - name: Add Just to global path
@@ -62,4 +66,5 @@
     line: "export PATH={{ just_default_path }}:$PATH"
     create: yes
     mode: 0644
-  when: version_dir.stat.exists
+  when: 
+    - just_default_version_executable.stat.exists
