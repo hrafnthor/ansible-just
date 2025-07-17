@@ -1,22 +1,38 @@
-- name: Assert necessary variables and environment for Just installation
-  ansible.builtin.import_tasks: assert.yml
+- name: "HTH | Just | Assert input variables"
+  ansible.utils.validate:
+    data: "{{ just }}"
+    criteria: "{{ lookup('file', 'assertions/criteria/just.json') | from_json }}"
+    engine: ansible.utils.jsonschema
   run_once: yes
   delegate_to: localhost
 
-- name: Download versions
+- name: "HTH | Just | Set default executable symlink path"
+  ansible.builtin.set_fact:
+    just_default_executable_symlink_destination: "/usr/bin/just"
+
+- name: "HTH | Just | Download versions"
   ansible.builtin.include_tasks: download.yml
   loop: "{{ just.versions }}"
   loop_control:
     loop_var: version
-  when: just.versions | length > 0
+  when:
+    - just.versions | length > 0
+    - just.remove is undefined or not just.remove
 
-
-- name: Trim undefined versions
+- name: "HTH | Just | Trim undefined versions"
   ansible.builtin.include_tasks: trim.yml
-  when: just.trim
+  when:
+    - just.trim
+    - just.remove is undefined or not just.remove
 
-
-- name: Link default version
+- name: "HTH | Just | Link default version"
   ansible.builtin.include_tasks: default.yml
   when: 
-    - just.default | length > 0 
+    - just.default | length > 0
+    - just.remove is undefined or not just.remove
+
+- name: "HTH | Just | Remove installation"
+  ansible.builtin.include_tasks: remove.yml
+  when:
+    - just.remove is defined
+    - just.remove

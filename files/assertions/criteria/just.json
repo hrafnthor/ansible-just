@@ -4,6 +4,10 @@
     "type": "object",
     "properties":
     {
+        "remove":
+        {
+            "type": "boolean"
+        },
         "trim":
         {
             "type": "boolean"

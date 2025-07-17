@@ -1,0 +1,29 @@
+# community.general.alternatives is unable to remove links unless their symlink
+# counterpart is passed in as well.
+- name: "HTH | Just | Stat alternatives symlink"
+  ansible.builtin.stat:
+    path: /etc/alternatives/just
+  register: just_alternative_info
+  when: ansible_distribution in ["Debian", "Pop!_OS", "Ubuntu"]
+
+- name: "HTH | Just | Remove global symlink"
+  community.general.alternatives:
+    name: just
+    link: /usr/bin/just
+    path: "{{ just_alternative_info.stat.lnk_target }}"
+    state: absent
+  when: ansible_distribution in ["Debian", "Pop!_OS", "Ubuntu"]
+
+# community.general.alternatives will not actually remove the symlink
+# inside /etc/alternatives which can cause the alternative linking to fail
+# later on if retried.
+- name: "HTH | Just | Remove global symlink"
+  ansible.builtin.file:
+    path: "{{ just_alternative_info.stat.path }}"
+    state: absent
+  when: ansible_distribution in ["Debian", "Pop!_OS", "Ubuntu"]
+
+- name: "HTH | Just | Remove installation directory"
+  ansible.builtin.file:
+    path: "{{ just_default_path }}"
+    state: absent
