@@ -1,28 +1,40 @@
-Role Name
-=========
+# Ansible Just
 
 An opinionated role that installs [Just](https://just.systems)
 
-Requirements
-------------
+## Requirements
 
-This role requires two separate tools be installed.
+This role requires two separate collections be installed.
 
-First it requires the 'ansible.utils' collection be installed from Ansible-Galaxy via:
+First it requires the `ansible.utils` collection be installed from Ansible-Galaxy via:
 
 ```shell
 ansible-galaxy collection install ansible.utils
 ```
 
-Secondly it requires the `jsonschema` Python package be installed via:
+Secondly it requires the `community.general` collection to be installed from Ansible-Galaxy via:
+
+```shell
+ansible-galaxy collection install community.general
+```
+
+It then also requires the `jsonschema` Python package be installed via:
 
 ```shell
 pip3 install jsonschema
 ```
 
+## Role Variables
 
-Role Variables
---------------
+All variables are optional unless otherwise marked as required.
+
+```yaml
+just:
+    remove:     [bool]          Indicates if just should be removed
+    trim:       [bool]          Indicates if non default versions should be removed
+    default:    [string]        The version that should be set as default
+    versions:   [string array]  A list of versions that should be installed
+```
 
 `just` : [mapping] (required) contains the following fields:
 
@@ -38,28 +50,28 @@ Role Variables
 
     If true indicates that all non linked directories under `just_path` that do not correspond to version numbers defined inside `versions` should be removed.
 
+### Defaults
 
-`just_path` : [string] (optional) The path at which `Just` will be extracted to.
+`just_default_path` : [string] (optional) The path at which `Just` will be extracted to. Defaults to `/opt/just`
 
 Example:
 
 ```yaml
-- just:
-    - trim: true
-    - default: "1.1.1"
-    - versions:
+just:
+    remove: false
+    trim: true
+    default: "1.1.1"
+    versions:
       - "1.1.1"
       - "1.2.2"
  ```
 
 
-Dependencies
-------------
+## Dependencies
 
 None, other then previously stated requirements.
 
-Setup
------
+## Setup
 
 Before the role can be used it needs to be added to the machine running the playbook, and as of writing this, this role is not hosted on Ansible-Galaxy only on Github.
 
@@ -82,8 +94,7 @@ ansible-galaxy install -r .requirements.yml
 This will allow any playbook run from this machine to use the role `hth-just`
 
 
-Example Playbook
-----------------
+## Example Playbook
 
 
 ```yaml
@@ -100,13 +111,33 @@ Example Playbook
 ```
 
 
-License
--------
+## License
 
-MIT license. See attached license file.
+```
+MIT License
 
-Author Information
-------------------
+Copyright (c) 2023 Hrafn Þorvaldsson
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+### Author Information
 
 Hrafn Thorvaldsson
 Find me at https://www.hth.is

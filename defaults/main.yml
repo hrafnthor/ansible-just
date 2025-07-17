@@ -1,2 +1,2 @@
 # Default installation path
-just_path: "/usr/opt/just"
+just_default_path: "/opt/just"

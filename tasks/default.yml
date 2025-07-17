@@ -1,70 +1,21 @@
-- name: Set Just version install directory
+- name: "HTH | Just | Set version executable path"
   ansible.builtin.set_fact:
-    just_version_executable_path: "{{ just_path }}/{{ just.default }}/just"
+    just_version_executable_path: "{{ just_default_path }}/{{ just.default }}/just"
 
-
-- name: Lookup default executable
+- name: "HTH | Just | Stat version executable"
   ansible.builtin.stat:
     path:  "{{ just_version_executable_path }}"
   register: just_default_version_executable
 
-
-- name: Fail on Just version directory not existing
+- name: "HTH | Just | Fail on version executable not existing"
   ansible.builtin.fail:
-    msg: "Directory for default version {{ just.default }} was not found!"
+    msg: "Executable for version {{ just.default }} was not found!"
   when: 
     - not just_default_version_executable.stat.exists
 
-
-- name: Set Just default directory
-  ansible.builtin.set_fact:
-    just_default_path: "{{ just_path }}/default"
-  when: 
-    - just_default_version_executable.stat.exists
-
-
-- name: Lookup Just default directory
-  ansible.builtin.stat:
-    path:  "{{ just_default_path }}"
-  register: default_dir
-  when: 
-    - just_default_version_executable.stat.exists
-
-
-- name: Create default directory
-  ansible.builtin.file:
-    path: "{{ just_default_path }}"
-    state: directory
-    modification_time: preserve
-    access_time: preserve
-    owner: "root"
-    group: "root"
-    mode: 0755
-  when:
-    - not default_dir.stat.exists
-    - just_default_version_executable.stat.exists
-
-
-- name: Link default version
-  ansible.builtin.file:
-    src: "{{ just_version_executable_path }}"
-    dest: "{{ just_default_path }}/just"
-    state: link
-    modification_time: preserve
-    access_time: preserve
-    owner: "root"
-    group: "root"
-    mode: 0755
-  when: 
-    - just_default_version_executable.stat.exists
-
-
-- name: Add Just to global path
-  ansible.builtin.lineinfile: 
-    path: /etc/profile.d/just.sh
-    regexp: "^export PATH=" 
-    line: "export PATH={{ just_default_path }}:$PATH"
-    create: yes
-    mode: 0644
-  when: 
-    - just_default_version_executable.stat.exists
+- name: "HTH | Just | Set as global version"
+  community.general.alternatives:
+    name: just
+    link: /usr/bin/just
+    path: "{{ just_version_executable_path }}"
+  when: ansible_distribution in ["Debian", "Pop!_OS", "Ubuntu"]

@@ -1,57 +1,62 @@
-- name: Download and unarchive Just version
-  block:
+- name: "HTH | Just | Set version install location"
+  ansible.builtin.set_fact:
+    just_version_path: "{{ just_default_path }}/{{ version }}"
 
-  - name: Ensure Just installation directory
-    ansible.builtin.file:
-      path: "{{ just_path }}"
-      state: directory
-      modification_time: preserve
-      access_time: preserve
-      owner: "root"
-      group: "root"
-      mode: 0755
+- name: " HTH | Just | Lookup version executable"
+  ansible.builtin.stat:
+    path:  "{{ just_version_path }}/just"
+  register: just_version_executable
 
+- name: "HTH | Just | Set archive name"
+  ansible.builtin.set_fact:
+    just_archive_name: "just-{{ version }}.tar.gz"
+  when:
+    - not just_version_executable.stat.exists
 
-  - name: Set Just version install location
-    ansible.builtin.set_fact:
-      just_version_path: "{{ just_path }}/{{ version }}"
+- name: "HTH | Just | Set archive download path"
+  ansible.builtin.set_fact:
+    just_archive_download_path: "/tmp/{{ just_archive_name }}"
+  when:
+    - not just_version_executable.stat.exists
 
+- name: "HTH | Just | Ensure root installation directory"
+  ansible.builtin.file:
+    path: "{{ just_default_path }}"
+    state: directory
+    modification_time: preserve
+    access_time: preserve
+    owner: "root"
+    group: "root"
+    mode: 0755
+  when:
+    - not just_version_executable.stat.exists
 
-  - name: Ensure Just version directory
-    ansible.builtin.file:
-      path: "{{ just_version_path }}"
-      state: directory
-      modification_time: preserve
-      access_time: preserve
-      owner: "root"
-      group: "root"
-      mode: 0755
+- name: "HTH | Just | Ensure version installation directory"
+  ansible.builtin.file:
+    path: "{{ just_version_path }}"
+    state: directory
+    modification_time: preserve
+    access_time: preserve
+    owner: "root"
+    group: "root"
+    mode: 0755
+  when:
+    - not just_version_executable.stat.exists
 
+- block:
 
-  - name: Set archive name
-    ansible.builtin.set_fact:
-      just_archive_name: "just-{{ version }}.tar.gz"
-
-
-  - name: Lookup Just version executable
-    ansible.builtin.stat:
-      path:  "{{ just_version_path }}/just"
-    register: just_version_executable
-
-
-  - name: Download version archive
+  - name: "HTH | Just | Download version archive"
     ansible.builtin.get_url:
       url: "https://github.com/casey/just/releases/download/{{ version }}/just-{{ version }}-x86_64-unknown-linux-musl.tar.gz"
-      dest: "/tmp/{{ just_archive_name }}"
+      dest: "{{ just_archive_download_path }}"
     register: archive_download_state
     when: 
       - not just_version_executable.stat.exists
 
-
-  - name: Extract archive
+  - name: "HTH | Just | Extract archive"
     ansible.builtin.unarchive:
       remote_src: yes
-      src: "/tmp/{{ just_archive_name }}"
+      src: "{{ just_archive_download_path }}"
       dest: "{{ just_version_path }}"
       owner: "root"
       group: "root"
@@ -60,11 +65,11 @@
     when: 
       - not just_version_executable.stat.exists
 
-
-
   always:
 
-    - name: Cleanup temporary directory
+    - name: "HTH | Just | Cleanup temporary files"
       ansible.builtin.file:
-        path: "/tmp/{{ just_archive_name }}"
+        path: "{{ just_archive_download_path }}"
         state: absent
+      when:
+        - not just_version_executable.stat.exists
