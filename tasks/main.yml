@@ -27,7 +27,7 @@
 
 - name: "HTH | Just | Link default version"
   ansible.builtin.include_tasks: default.yml
-  when: 
+  when:
     - just.default | length > 0
     - just.remove is undefined or not just.remove
 
@@ -36,3 +36,55 @@
   when:
     - just.remove is defined
     - just.remove
+
+- name: "HTH | Just | Generate auto complete for 'bash'"
+  ansible.builtin.include_tasks: completion.yml
+  loop: "{{ just.completions.bash }}"
+  loop_control:
+    loop_var: user
+  vars:
+    shell_name: "bash"
+    shell_completion_dir: "{{ just_default_bash_completion_path }}"
+  when:
+    - just.remove is undefined or not just.remove
+    - just.completions is defined
+    - just.completions.bash is defined
+
+- name: "HTH | Just | Generate auto complete for 'zsh'"
+  ansible.builtin.include_tasks: completion.yml
+  loop: "{{ just.completions.zsh }}"
+  loop_control:
+    loop_var: user
+  vars:
+    shell_name: "zsh"
+    shell_completion_dir: "{{ just_default_zsh_completion_path }}"
+  when:
+    - just.remove is undefined or not just.remove
+    - just.completions is defined
+    - just.completions.zsh is defined
+
+- name: "HTH | Just | Generate auto complete for 'ohmyzsh'"
+  ansible.builtin.include_tasks: completion.yml
+  loop: "{{ just.completions.ohmyzsh }}"
+  loop_control:
+    loop_var: user
+  vars:
+    shell_name: "zsh"
+    shell_completion_dir: "{{ just_default_ohmyzsh_completion_path }}"
+  when:
+    - just.remove is undefined or not just.remove
+    - just.completions is defined
+    - just.completions.ohmyzsh is defined
+
+- name: "HTH | Just | Generate auto complete for 'fish'"
+  ansible.builtin.include_tasks: completion.yml
+  loop: "{{ just.completions.bash }}"
+  loop_control:
+    loop_var: user
+  vars:
+    shell_name: "fish"
+    shell_completion_dir: "{{ just_default_fish_completion_path }}"
+  when:
+    - just.remove is undefined or not just.remove
+    - just.completions is defined
+    - just.completions.fish is defined

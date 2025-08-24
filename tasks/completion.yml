@@ -1,0 +1,22 @@
+# This file contains tasks related to the generation of shell autocomplete files
+# for Just.
+
+- name: "HTH | Just | Set shell completion dir for user"
+  ansible.builtin.set_fact:
+    user_shell_completion_dir: "/home/{{ user }}/{{ shell_completion_dir }}"
+
+- name: "HTH | Just | Ensure directory"
+  ansible.builtin.file:
+    path: "{{ user_shell_completion_dir }}"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0700
+    modification_time: preserve
+    access_time: preserve
+
+- name: "HTH | Just | Generate auto complete for user's shell"
+  become: true
+  become_user: "{{ user }}"
+  ansible.builtin.shell:
+    cmd: "/usr/bin/just --completions {{ shell_name }} > {{ user_shell_completion_dir }}/_just"

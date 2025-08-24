@@ -30,10 +30,15 @@ All variables are optional unless otherwise marked as required.
 
 ```yaml
 just:
-    remove:     [bool]          Indicates if just should be removed
-    trim:       [bool]          Indicates if non default versions should be removed
-    default:    [string]        The version that should be set as default
-    versions:   [string array]  A list of versions that should be installed
+  remove:     [bool]          Indicates if just should be removed
+  trim:       [bool]          Indicates if non default versions should be removed
+  default:    [string]        The version that should be set as default
+  versions:   [string array]  A list of versions that should be installed
+  completions:
+    bash:     [string array]  A list of all users that should have bash completions added
+    zsh:      [string array]  A list of all users that should have zsh completions added
+    ohmyzsh:  [string array]  A list of all users that should have ohmyzsh completions added
+    fish:     [string array]  A list of all users that should have fish completions added
 ```
 
 `just` : [mapping] (required) contains the following fields:
@@ -54,16 +59,32 @@ just:
 
 `just_default_path` : [string] (optional) The path at which `Just` will be extracted to. Defaults to `/opt/just`
 
+`just_default_zsh_completion_path` : [string] (optional) The at which auto completion file will be generated for `zsh`. Is always relative to a user's home directory. Defaults to `.local/share/zsh/completions`
+
+`just_default_ohmyzsh_completion_path` : [string] (optional) The at which auto completion file will be generated for `ohmyzsh`. Is always relative to a user's home directory. Defaults to `.oh-my-zsh/completions`
+
+`just_default_bash_completion_path` : [string] (optional) The at which auto completion file will be generated for `bash`. Is always relative to a user's home directory. Defaults to `.local/share/bash-completion/completions`
+
+`just_default_fish_completion_path` : [string] (optional) The at which auto completion file will be generated for `fish`. Is always relative to a user's home directory. Defaults to `.config/fish/completions`
+
 Example:
 
 ```yaml
 just:
-    remove: false
-    trim: true
-    default: "1.1.1"
-    versions:
-      - "1.1.1"
-      - "1.2.2"
+  remove: false
+  trim: true
+  default: "1.1.1"
+  versions:
+    - "1.1.1"
+    - "1.2.2"
+  completions:
+    bash:
+      - odinn
+    zsh:
+      - loki
+    ohmyzsh:
+      - loki
+      - thor
  ```
 
 
@@ -101,11 +122,19 @@ This will allow any playbook run from this machine to use the role `hth-just`
 - hosts: all
     vars:
     - just:
-      - trim: true
-      - default: "1.1.1"
-      - versions:
+        trim: true
+        default: "1.1.1"
+        versions:
         - "1.1.1"
         - "1.2.2"
+        completions:
+          bash:
+            - odinn
+          zsh:
+            - loki
+          ohmyzsh:
+            - loki
+            - thor
   roles:
      - hth-just
 ```
