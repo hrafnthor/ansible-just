@@ -1,2 +1,14 @@
 # Default installation path
 just_default_path: "/opt/just"
+
+# Default location for shell auto completion for zsh
+just_default_zsh_completion_path: "/.local/share/zsh/completions"
+
+# Default location for shell auto completion for ohmyzsh
+just_default_ohmyzsh_completion_path: "/.oh-my-zsh/completions"
+
+# Default location for shell auto completion for bash
+just_default_bash_completion_path: "/.local/share/bash-completion/completions"
+
+# Default location for shell auto completion for fish
+just_default_fish_completion_path: "/.config/fish/completions"

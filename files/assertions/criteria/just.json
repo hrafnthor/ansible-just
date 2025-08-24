@@ -23,6 +23,29 @@
             {
                 "$ref": "#/definitions/non-empty-string"
             }
+        },
+        "completions":
+        {
+            "type": "object",
+            "properties":
+            {
+                "zsh":
+                {
+                    "$ref": "#/definitions/non-empty-string-array"
+                },
+                "bash":
+                {
+                    "$ref": "#/definitions/non-empty-string-array"
+                },
+                "ohmyzsh":
+                {
+                    "$ref": "#/definitions/non-empty-string-array"
+                },
+                "fish":
+                {
+                    "$ref": "#/definitions/non-empty-string-array"
+                }
+            }
         }
     },
     "definitions":
@@ -31,6 +54,15 @@
         {
             "type": "string",
             "minLength": 1
+        },
+        "non-empty-string-array":
+        {
+            "type": "array",
+            "minItems": 1,
+            "items":
+            {
+                "$ref": "#/definitions/non-empty-string"
+            }
         }
     }
 }
